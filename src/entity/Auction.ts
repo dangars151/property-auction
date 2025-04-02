@@ -22,4 +22,7 @@ export class Auction {
 
   @Column()
   highest_bidder_id?: number;
+
+  @Column('timestamp')
+  updated_at?: Date;
 }

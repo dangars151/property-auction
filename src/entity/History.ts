@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from "typeorm";
+import { User } from "./User";
 
 @Entity('histories')
 export class History {
@@ -16,4 +17,7 @@ export class History {
 
   @Column()
   is_success?: boolean;
+
+  @Column('timestamp')
+  updated_at?: Date;
 }

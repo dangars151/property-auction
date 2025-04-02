@@ -65,7 +65,7 @@ AppDataSource.initialize()
 
       await AppDataSource.getRepository(User).save(newUser);
     
-      res.status(201).json({ message: "Đăng ký thành công!" });
+      res.status(201).json({ message: "Sign up successfully!" });
     });
 
     app.post("/signin", async (req, res) => {
@@ -91,7 +91,7 @@ AppDataSource.initialize()
         throw new Error('JWT_SECRET is not defined in the environment variables');
       }
 
-      const token = jwt.sign({ userId: user.id, email: user.email }, secretKey, { expiresIn: '24h' });
+      const token = jwt.sign({ id: user.id, email: user.email }, secretKey, { expiresIn: '24h' });
     
       res.status(200).json({ token });
     });
@@ -113,7 +113,7 @@ AppDataSource.initialize()
       res.status(201).json(result);
     });
 
-    app.post("/auctions/bid", authenticateJWT, async (req, res) => {
+    app.post("/auctions/bid", authenticateJWT, async (req: Request, res: Response) => {
       const { auction_id, new_bid } = req.body;
 
       if (new_bid <= 0) {
@@ -156,6 +156,7 @@ AppDataSource.initialize()
             auction_id,
             bid_price: new_bid,
             is_success,
+            updated_at: new Date(),
           })
           .execute()
           .catch((error) => console.error("Error inserting history:", error));
@@ -168,6 +169,27 @@ AppDataSource.initialize()
 
       res.status(200).json({ message: "Auction failed!" });
     });
+
+    app.get("/histories", authenticateJWT, async (req: Request, res: Response) => {
+      const { auction_id } = req.query;
+
+      const histories = await AppDataSource.getRepository(History).find({
+        where: { auction_id: Number(auction_id) },
+        order: { updated_at: 'desc' }
+      });
+
+      res.status(200).json({ histories });
+    })
+
+    app.get("/auctions/:id", authenticateJWT, async (req: Request, res: Response) => {
+      const id = Number(req.params.id);
+
+      const auction = await AppDataSource.getRepository(Auction).findOne({
+        where: { id },
+      });
+
+      res.status(200).json({ auction });
+    })
 
     app.listen(PORT, () => {
       console.log(`🚀 Server is running in http://localhost:${PORT}`);

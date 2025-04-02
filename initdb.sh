@@ -21,6 +21,7 @@ psql -v ON_ERROR_STOP=1 --username "user" --dbname "property_auction" <<-EOSQL
     step_price FLOAT NOT NULL,
     current_bid FLOAT DEFAULT 0,
     highest_bidder_id INTEGER,
+    updated_at TIMESTAMP,
     FOREIGN KEY (highest_bidder_id) REFERENCES users(id) ON DELETE SET NULL
   );
 
@@ -30,6 +31,7 @@ psql -v ON_ERROR_STOP=1 --username "user" --dbname "property_auction" <<-EOSQL
     auction_id INTEGER,
     bid_price FLOAT NOT NULL,
     is_success boolean,
+    updated_at TIMESTAMP NOT NULL,
     FOREIGN KEY (bidder_id) REFERENCES users(id) ON DELETE SET NULL,
     FOREIGN KEY (auction_id) REFERENCES auctions(id) ON DELETE SET NULL
   );
