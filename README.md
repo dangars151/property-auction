@@ -1,1 +1,4 @@
-# property-auction
+- B1: chạy docker-compose up --build để chạy postgres và khởi tạo DB (nếu muốn xóa dữ liệu có thể chạy docker-compose down -v)
+- B2: chạy npm install để cài đặt thư viện
+- B3: chạy npx ts-node src/index.ts để chạy app
+- B4: import file postman export để thử các API
