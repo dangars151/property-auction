@@ -7,11 +7,14 @@ import { History } from './entity/History';
 import dotenv from "dotenv";
 import bcrypt from 'bcryptjs';
 import jwt from "jsonwebtoken";
+const Redis = require('ioredis');
 
 dotenv.config();
 
 const app = express();
 app.use(express.json());
+
+const redis = new Redis();
 
 const PORT = 3000;
 
@@ -144,6 +147,15 @@ AppDataSource.initialize()
       
       var is_success = result.affected && result.affected > 0
 
+      // Sử dụng sorted set để tối ưu việc lấy current_bid. Score chính là của sorted set chính là current_bid
+      // Khi lấy current_bid thì sẽ lấy giá trị có current_bid lớn nhất
+      // Để TTL = 3ph
+      if (is_success) {
+        const unixTime = Math.floor(new Date().getTime() / 1000);
+        await redis.zadd('auction_' + auction_id, new_bid, unixTime);
+        await redis.expire('auction_' + auction_id, 180)
+      }
+
       // Việc đưa lưu lịch sử vào setImmediate vì không muốn ảnh hưởng đến luồng chính
       // Cũng không cần phải await ở đây, vì việc xem lịch sử không phải quá nhiều và liên tục, nên sử dụng bất đồng bộ cho nhanh
       setImmediate(() => {
@@ -181,6 +193,15 @@ AppDataSource.initialize()
       res.status(200).json({ histories });
     })
 
+    /*
+      - Đoạn này chia thành 2 API:
+        + auctions/:id 
+          -> lấy giá trị base_price và step_price trong DB vì 2 giá trị này không bao giờ thay đổi và chỉ cần 1 lần
+          -> khi current_bid trong redis hết hạn thì có thể dùng luôn giá trị trong DB
+        + auctions/:id/current_bid 
+          -> lấy current_bid vì giá trị này sẽ thay đổi liên tục và được truy cập rất nhiều
+          -> sử dụng sorted tối ưu hiệu năng để lấy điểm hiện tại (score lớn nhất)
+    */
     app.get("/auctions/:id", authenticateJWT, async (req: Request, res: Response) => {
       const id = Number(req.params.id);
 
@@ -190,6 +211,14 @@ AppDataSource.initialize()
 
       res.status(200).json({ auction });
     })
+
+    app.get('/auctions/:id/current_bid', authenticateJWT, async (req: Request, res: Response) => {
+      const id = Number(req.params.id);
+
+      const result = await redis.zrevrange('auction_' + id, 0, 0, 'WITHSCORES');
+  
+      res.status(200).json({ highestValue: result[0], highestScore: result[1] });
+  });
 
     app.listen(PORT, () => {
       console.log(`🚀 Server is running in http://localhost:${PORT}`);

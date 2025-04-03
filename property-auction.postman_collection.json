@@ -134,13 +134,13 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJkYW5naHQxMTEiLCJpYXQiOjE3NDM2MjM1NzEsImV4cCI6MTc0MzcwOTk3MX0.8UyUr5EFiRzFC0a8Yahq21FgQSqZ6ITxy69I7H35pG8",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJkYW5naHQxMTEiLCJpYXQiOjE3NDM2NTI1NjUsImV4cCI6MTc0MzczODk2NX0.SDqwGo92pUi_bE79gZmbJDGTGK-Ldg6yTFaE7EUjo-o",
 						"type": "text"
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"auction_id\": 1,\r\n    \"new_bid\": 60\r\n}",
+					"raw": "{\r\n    \"auction_id\": 1,\r\n    \"new_bid\": 95\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -191,6 +191,65 @@
 							"key": "auction_id",
 							"value": "1"
 						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "auctions/1",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJkYW5naHQxMTEiLCJpYXQiOjE3NDM2MjM1NzEsImV4cCI6MTc0MzcwOTk3MX0.8UyUr5EFiRzFC0a8Yahq21FgQSqZ6ITxy69I7H35pG8",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/auctions/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"auctions",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "auctions/1/current_bid",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJkYW5naHQxMTEiLCJpYXQiOjE3NDM2NTI1NjUsImV4cCI6MTc0MzczODk2NX0.SDqwGo92pUi_bE79gZmbJDGTGK-Ldg6yTFaE7EUjo-o",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/auctions/1/current_bid",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"auctions",
+						"1",
+						"current_bid"
 					]
 				}
 			},
